@@ -1,0 +1,43 @@
+
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+fileName = raw_input('Input the file name:')
+img = cv2.imread('/Users/Haoyang/Downloads/Pics/' + fileName,0)
+
+rows,cols = img.shape
+
+f = np.fft.fft2(img,(rows,cols))
+#f = np.fft.fft2(img)
+
+fshift = np.fft.fftshift(f)
+
+mag_spectrum = 20 * np.log(abs(fshift))
+
+'''
+plt.subplot(121);plt.imshow(img,cmap = 'gray');plt.title('original image')
+
+plt.subplot(122);plt.imshow(mag_spectrum,cmap = 'gray');plt.title('FFT')
+
+plt.show()
+'''
+#--------------------------------------------------
+crow,ccol = rows/2, cols/2
+fshift[crow-30:crow+30,ccol-30:ccol+30] = 0
+f_ishift = np.fft.ifftshift(fshift)
+img_back = np.fft.ifft2(f_ishift)
+
+img_back = np.abs(img_back)
+
+cv2.imshow('after HPF',img_back)
+
+plt.subplot(131);plt.imshow(img,cmap = 'gray');plt.title('original')
+plt.subplot(132);plt.imshow(img_back,cmap = 'gray');plt.title('after HPF')
+plt.subplot(133);plt.imshow(img_back);plt.title('in JET')
+plt.show()
+
+#cv2.waitKey()
+cv2.destroyAllWindows()
+
